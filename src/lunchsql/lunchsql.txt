@@ -1,0 +1,30 @@
+create table lunchinfo(
+lno number primary key,
+lmenu varchar2(30),
+lprice number,
+lcontent varchar2(300),
+lgroup number,
+lstep number,
+lindent number,
+lhit number,
+lfileimg varchar2(50));
+
+create sequence lunchinfo_seq;
+insert into lunchinfo values(lunchinfo_seq.nextval,
+        'pizz1',10000,'담백',lunchinfo_seq.currval,0,0,0,'noimg');
+commit;
+select * from lunchinfo;
+
+
+INSERT INTO lunchinfo VALUES(lunchinfo_seq.NEXTVAL,
+		#{param1},#{param2},#{param3},
+		lunchinfo_seq.currval,0,0,0,#{param4})
+-----------------------------
+create table member3
+(mid varchar2(20) primary key,
+mpw varchar2(20),
+mnickname varchar2(20));
+
+insert into member3 values('blue1','111','cj');
+commit;
+select * from member3;

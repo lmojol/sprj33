@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tech.sprj33.dao.LunchIDao">
+	<sql id="includeList">
+		<choose>
+			<when test="param4==1">
+				WHERE BTITLE LIKE '%'||#{param3}||'%'
+			</when>
+			<when test="param4==2">
+				WHERE BCONTENT LIKE '%'||#{param3}||'%'
+			</when>
+			<when test="param4==3">
+				WHERE BTITLE LIKE '%'||#{param3}||'%' or BCONTENT LIKE '%'||#{param3}||'%'
+			</when>
+			<otherwise>
+			
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<sql id="includeCount">
+		<choose>
+			<when test="param2==1">
+				WHERE LMENU LIKE '%'||#{param1}||'%'
+			</when>
+			<when test="param2==2">
+				WHERE lCONTENT LIKE '%'||#{param1}||'%'
+			</when>
+			<when test="param2==3">
+				WHERE LMENU LIKE '%'||#{param1}||'%' or LCONTENT LIKE '%'||#{param1}||'%'
+			</when>
+			<otherwise>
+			
+			</otherwise>
+		</choose>
+	</sql>
+
+	<select id="list" resultType="com.tech.sprj33.dto.LunchDto">
+		SELECT LNO,LMENU,LPRICE,LCONTENT,LGROUP,LSTEP,LINDENT,LHIT,LFILEIMG
+		FROM
+		(SELECT LNO,LMENU,LPRICE,LCONTENT,LGROUP,LSTEP,LINDENT,LHIT,LFILEIMG,
+		ROW_NUMBER() OVER(ORDER BY LGROUP DESC,LSTEP ASC) B_SEQ FROM LUNCHINFO
+		)
+		WHERE B_SEQ BETWEEN 1 AND 5
+	</select>	
+
+	<select id="selectBoardTotCount" resultType="Integer">
+		SELECT COUNT(*) FROM LUNCHINFO
+		<include refid="includeCount" />
+	</select>	
+	<insert id="write">
+		INSERT INTO LUNCHINFO VALUES(LUNCHINFO_SEQ.NEXTVAL,
+		#{param1},#{param2},#{param3},
+		LUNCHINFO_SEQ.CURRVAL,0,0,0,#{param4})
+	</insert>
+	<delete id="delete">
+		DELETE FROM LUNCHINFO WHERE LNO=#{param1}
+	</delete>
+	
+	<update id="modify">
+		UPDATE LUNCHINFO 
+			SET LMENU=#{param2}, LCONTENT=#{param3},
+				LPRICE=#{param4} WHERE LNO=#{param1}
+	</update>
+	<select id="contentView" resultType="com.tech.sprj33.dto.LunchDto">
+		SELECT LNO,LMENU,LPRICE,LCONTENT,
+			LGROUP,LSTEP,LINDENT,LHIT,LFILEIMG
+			FROM LUNCHINFO WHERE LNO=#{param1}
+	</select>
+	
+</mapper>
